@@ -30,6 +30,20 @@ $(function () {
         console.log(mapArr)
         return mapArr;
     }
+    
+    //인덱스 값이 테두리에 걸친 경우 false를 리턴해서 위치를 재선정 할 생각
+    function reposition(){
+        var mapArr = getMapArr();
+        var mapSize = setMap()[0];
+        for(var i=0; i<mapArr.length; i++){
+            if(mapArr[i].indexOf(0) >=0|| mapArr[i].indexOf(mapSize+1)>=0){
+                return false;
+            }else{
+                return true;
+            }
+        }
+    
+    }
 
     $("#startBtn").click(setMap)
     $("#alignBtn").click(getMapArr);
