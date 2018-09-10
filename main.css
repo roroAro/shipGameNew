@@ -9,3 +9,16 @@ table tbody tr td{
     text-align: center;
     vertical-align: center;
 }
+
+table tbody tr:first-child{
+    display: none;
+}
+table tbody tr:last-child{
+    display: none;
+}
+table tbody tr td:first-child{
+    display: none;
+}
+table tbody tr td:last-child{
+    display: none;
+}
