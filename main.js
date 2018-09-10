@@ -48,7 +48,33 @@ $(function () {
         return [atSide, atCenter]
     }
 
+    function setDirection() {
+        var direction = Math.floor(Math.random() * 2);
+        return direction;
+    }
+
+    function makeRandomNum() {
+        var randomRange = sortIdx()[1].length;
+        var randomNum = Math.floor(Math.random() * randomRange);
+        return randomNum;
+    }
+
+    function makeRandomArr() {
+        var direction = setDirection();
+        var randomNum = parseInt(makeRandomNum());
+        var mapSize = parseInt(setMap()[0]);
+        var randomArr = [];
+        if (direction == 0) {
+            randomArr.push(randomNum - 1, randomNum, randomNum + 1)
+        } else if (direction == 1) {
+            randomArr.push(randomNum - mapSize, randomNum, randomNum + mapSize)
+        }
+        console.log(randomArr);
+        return randomArr;
+    }
+
+
 
     $("#startBtn").click(setMap)
-    $("#alignBtn").click(sortIdx);
+    $("#alignBtn").click(makeRandomArr);
 })
