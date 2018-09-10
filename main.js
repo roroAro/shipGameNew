@@ -27,25 +27,24 @@ $(function () {
                 mapArr.push("" + i + "" + j)
             }
         }
-        console.log(mapArr)
         return mapArr;
     }
 
     function sortIdx() {
         var mapArr = getMapArr();
         var mapSize = setMap()[0];
-        var atSide = [];
-        var atCenter = [];
+        var atSideArr = [];
+        var atCenterArr = [];
         for (var i = 0; i < mapArr.length; i++) {
             if (mapArr[i].indexOf(0) >= 0) {
-                atSide.push(mapArr[i])
+                atSideArr.push(mapArr[i])
             } else if (mapArr[i].indexOf(mapSize + 1) >= 0) {
-                atSide.push(mapArr[i])
+                atSideArr.push(mapArr[i])
             } else {
-                atCenter.push(mapArr[i])
+                atCenterArr.push(mapArr[i])
             }
         }
-        return [atSide, atCenter]
+        return [atSideArr, atCenterArr]
     }
 
     function setDirection() {
@@ -69,12 +68,27 @@ $(function () {
         } else if (direction == 1) {
             randomArr.push(randomNum - mapSize, randomNum, randomNum + mapSize)
         }
-        console.log(randomArr);
+        console.log("n번째 인덱스",randomArr);
         return randomArr;
+    }
+
+    function randomNumToIdx(){
+        var randomArr = makeRandomArr();
+        var atCenterArr = sortIdx()[1];
+        var shipIdx =[];
+        for(var i=0; i<3; i++){
+            shipIdx.push(atCenterArr[randomArr[i]]);
+        }
+        console.log("n번째 인덱스의 좌표 값",shipIdx)
+        if(shipIdx.length<3){
+            return false;
+        }else{
+            return shipIdx;
+        }
     }
 
 
 
     $("#startBtn").click(setMap)
-    $("#alignBtn").click(makeRandomArr);
+    $("#alignBtn").click(randomNumToIdx);
 })
