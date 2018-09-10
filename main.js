@@ -53,7 +53,7 @@ $(function () {
     }
 
     function makeRandomNum() {
-        var randomRange = sortIdx()[1].length;
+        var randomRange = mapArr.length;
         var randomNum = Math.floor(Math.random() * randomRange);
         return randomNum;
     }
@@ -72,6 +72,7 @@ $(function () {
         return randomArr;
     }
 
+
     function randomNumToIdx(){
         var randomArr = makeRandomArr();
         var atCenterArr = sortIdx()[1];
@@ -84,6 +85,15 @@ $(function () {
             return false;
         }else{
             return shipIdx;
+        }
+    }
+
+    function setTotalShipPos(){
+        var shipIdxArr = [];
+        var shipIdx = randomNumToIdx();
+        var shipAmt = setMap()[1];
+        for( var i=0; i<shipAmt; i++){
+            shipIdxArr.push(shipIdx);
         }
     }
 
