@@ -1,16 +1,16 @@
 $(function () {
-    
+
     function setMap() {
         var mapSize = parseInt($("#mapSize option:selected").html());
         var shipAmt = parseInt($("#shipAmt option:selected").html());
         console.log(mapSize, shipAmt, typeof (mapSize))
 
         var contents;
-        for (var i = 1; i < mapSize + 1; i++) {
+        for (var i = 0; i < mapSize; i++) {
             contents += "<tr>"
-            for (var j = 1; j < mapSize + 1; j++) {
+            for (var j = 0; j < mapSize; j++) {
                 contents += "<td>"
-                contents += [i, j]
+                contents += "" + i + "" + j;
                 contents += "</td>"
             }
             contents += "</tr>"
@@ -23,10 +23,10 @@ $(function () {
     function getMapArr() {
         var mapArr = [];
         var mapSize = setMap()[0];
-        console.log("map",mapSize)
-        for (var i = 1; i < mapSize + 1; i++) {
-            for (var j = 1; j < mapSize + 1; j++) {
-                mapArr.push([i, j])
+        console.log("map", mapSize)
+        for (var i = 0; i < mapSize; i++) {
+            for (var j = 0; j < mapSize; j++) {
+                mapArr.push("" + i + "" + j)
             }
         }
         console.log(mapArr);
