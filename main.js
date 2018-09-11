@@ -68,31 +68,42 @@ $(function () {
         } else if (direction == 1) {
             randomArr.push(randomNum - mapSize, randomNum, randomNum + mapSize)
         }
-        console.log("n번째 인덱스",randomArr);
+        console.log("n번째 인덱스", randomArr);
         return randomArr;
     }
 
 
-    function randomNumToIdx(){
+    function randomNumToIdx() {
         var randomArr = makeRandomArr();
         var atCenterArr = sortIdx()[1];
-        var shipIdx =[];
-        for(var i=0; i<3; i++){
+        var shipIdx = [];
+        for (var i = 0; i < 3; i++) {
             shipIdx.push(atCenterArr[randomArr[i]]);
         }
-        console.log("n번째 인덱스의 좌표 값",shipIdx)
-        if(shipIdx.length<3){
+        console.log("n번째 인덱스의 좌표 값", shipIdx)
+        if (shipIdx.length < 3) {
             return false;
-        }else{
+        } else {
             return shipIdx;
         }
     }
+   
+    function checkDuplication(targetArr, randomArr) {
+        for (var i = 0; i < randomArr.length; i++) {
+            if (targetArr.indexOf(randomArr[i]) >= 0) {
+                console.log("checkDupliaction() : 해당 배열의 겹칩니다 다시 뽑습니다", randomArr)
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }
 
-    function setTotalShipPos(){
+    function setTotalShipPos() {
         var shipIdxArr = [];
         var shipIdx = randomNumToIdx();
         var shipAmt = setMap()[1];
-        for( var i=0; i<shipAmt; i++){
+        for (var i = 0; i < shipAmt; i++) {
             shipIdxArr.push(shipIdx);
         }
     }
