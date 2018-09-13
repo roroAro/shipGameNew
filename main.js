@@ -20,14 +20,14 @@ $(function () {
     var edgePos = [0, mapSize, mapSize * (mapSize - 1) + 1, mapSize * mapSize];
     //배가 너무 가까운 경우의 좌표 차
     //각각의 숫자는 좌우 / 우상단,좌하단 / 상단,하단 / 좌상단,우하단 / 좌우로 2칸 / 상하로 2칸
-    var closePos = [1, -1, 6, -6, 7, -7, 8, -8, 2, -2, 14, -14]
+    var closePos = [1, -1, mapSize, -(mapSize-1), mapSize, -mapSize, mapSize+1, -(mapSize+1), 2, -2, mapSize*2, -mapSize*2]
 
     //세 척의 배 중앙 위치 랜덤 생성  
     var shipCenter = [];
     var ships = [];
 
     function makeRandomNum() {
-        var randomNum = Math.floor(Math.random() * 49) + 1;
+        var randomNum = Math.floor(Math.random() * Math.pow(mapSize,2.0)) + 1;
         return randomNum;
     }
 
@@ -54,7 +54,6 @@ $(function () {
                     console.log("checkDistance(): return false", shipCenter, random)
                 }
             }
-
             if (flag == false) {
                 return false;
             } else {
@@ -89,7 +88,7 @@ $(function () {
     }
 
     function setShipCenterArr() {
-        while (shipCenter.length < 3) {
+        while (shipCenter.length < shipAmt) {
             setShipCenter();
         }
         console.log("setShipCenterArr", shipCenter)
@@ -100,7 +99,6 @@ $(function () {
     //배의 중앙이 테두리에 위치하는 경우, 
     //방향을 수동으로 지정해줍니다 
     //각 줄은 맨 윗줄 테두리에는 가로로 지정 / 맨 밑줄 테두리에는 가로로 지정 /좌측 우측 테두리에는 세로로 지정 할 것을 의미합니다
-
     function setDirection() {
         var direction = [];
         for (var i = 0; i < 3; i++) {
@@ -229,7 +227,7 @@ $(function () {
 
         //사용자가 모든 전함의 위치를 알아내면 게임을 종료합니다.
         if (leftShip == 0) {
-            $("#result").val("모든 전함이 침몰했습니다. 점수를 확인하세요")
+            $("#result").val("모든 전함이 침몰했습니다. 점수를 확인하세요");
         }
         $("#grade").val(grade);
 
