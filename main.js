@@ -18,16 +18,16 @@ $(function () {
         size: 7,
     }
     var ship = {
-        amount :3,
-        length:3 ,
-        center :[],
-        total:[],
-        left: 3*3
+        amount: 3,
+        length: 3,
+        center: [],
+        total: [],
+        left: 3 * 3
     }
-    
+
     //배가 위치할 수 없는 구석자리
     var edgePos = [1, map.size, map.size * (map.size - 1) + 1, map.size * map.size];
-    
+
     //배가 너무 가까운 경우의 좌표 차
     //각각의 숫자는 좌우 / 우상단,좌하단 / 상단,하단 / 좌상단,우하단 / 좌우로 2칸 / 상하로 2칸
     var closePos = [1, -1, map.size, -(map.size - 1), map.size, -map.size, map.size + 1, -(map.size + 1), 2, -2, map.size * 2, -map.size * 2]
@@ -51,28 +51,27 @@ $(function () {
 
     //각각 배 사이의 거리가 적절한지 검사하는 함수
     function checkDistance(random) {
-        var diff;
-        var flag;
+        var diff = [];
+        var flag = [];
         if (ship.center.length == 0) {
             return true;
         } else if (ship.center.length >= 1) {
-        
-            for (var i = 0; i < ship.center.length; i++) {
-                diff = ship.center[i] - random;
-                //배가 너무 가까운 경우 flag에 false를 넣어줍니다 
-                if (closePos.indexOf(diff) >= 0) {
-                    flag = false;
+            for (var i = 0; i < ship.amount - 1; i++) {
+                diff[i] = ship.center[i] - random;
+            }
+            for (var i = 0; i < diff.length; i++) {
+                if (closePos.indexOf(diff[i]) >= 0) {
+                    flag.push(false);
                     console.log("checkDistance(): return false", ship.center, random)
+                } else {
+                    flag.push(true);
                 }
             }
-            //flag가 false이면 false를 리턴합니다
-            //flag를 사용하지 않으면 for문 돌다가 return을 해버려서 다음 인덱스를 검사를 못함 
-            if (flag == false) {
-                return false;
-            } else {
-                return true;
-            }
-
+        }
+        if (flag.indexOf(false) >= 0) {
+            return false;
+        } else {
+            return true;
         }
     }
 
@@ -121,9 +120,9 @@ $(function () {
         for (var i = 0; i < ship.amount; i++) {
             if (ship.center[i] >= 1 && ship.center[i] <= map.size) {
                 direction[i] = 0;
-            } else if (ship.center[i] >=  edgePos[2] && ship.center[i] <= edgePos[3]) {
+            } else if (ship.center[i] >= edgePos[2] && ship.center[i] <= edgePos[3]) {
                 direction[i] = 0;
-            } else if (ship.center[i] % map.size == 0 || ship.center[i] %map.size == 1) {
+            } else if (ship.center[i] % map.size == 0 || ship.center[i] % map.size == 1) {
                 direction[i] = 1;
             }
         }
