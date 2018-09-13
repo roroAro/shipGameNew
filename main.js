@@ -19,8 +19,10 @@ $(function () {
     }
     var ship = {
         amount :3,
+        length: 3,
         center :[],
         total:[],
+
     }
     /**
      var map.size = 7;
@@ -30,7 +32,7 @@ $(function () {
      * 
      */
     //배가 위치할 수 없는 구석자리
-    var edgePos = [0, map.size, map.size * (map.size - 1) + 1, map.size * map.size];
+    var edgePos = [1, map.size, map.size * (map.size - 1) + 1, map.size * map.size];
     //배가 너무 가까운 경우의 좌표 차
     //각각의 숫자는 좌우 / 우상단,좌하단 / 상단,하단 / 좌상단,우하단 / 좌우로 2칸 / 상하로 2칸
     var closePos = [1, -1, map.size, -(map.size - 1), map.size, -map.size, map.size + 1, -(map.size + 1), 2, -2, map.size * 2, -map.size * 2]
@@ -108,7 +110,7 @@ $(function () {
         while (ship.center.length < ship.amount) {
             setshipCenter();
         }
-        console.log("setship.centerArr", ship.center)
+        console.log("setshipCenterArr", ship.center)
         return ship.center;
     }
 
@@ -118,15 +120,15 @@ $(function () {
     //각 줄은 맨 윗줄 테두리에는 가로로 지정 / 맨 밑줄 테두리에는 가로로 지정 /좌측 우측 테두리에는 세로로 지정 할 것을 의미합니다
     function setDirection() {
         var direction = [];
-        for (var i = 0; i < 3; i++) {
+        for (var i = 0; i < ship.amount; i++) {
             direction[i] = Math.floor(Math.random() * 2);
         }
-        for (var i = 0; i < 3; i++) {
-            if (ship.center[i] >= 1 && ship.center[i] <= 7) {
+        for (var i = 0; i < ship.length; i++) {
+            if (ship.center[i] >= 1 && ship.center[i] <= map.size) {
                 direction[i] = 0;
-            } else if (ship.center[i] >= 43 && ship.center[i] <= 49) {
+            } else if (ship.center[i] >=  edgePos[2] && ship.center[i] <= edgePos[3]) {
                 direction[i] = 0;
-            } else if (ship.center[i] % 7 == 0 || ship.center[i] % 7 == 1) {
+            } else if (ship.center[i] % map.size == 0 || ship.center[i] %map.size == 1) {
                 direction[i] = 1;
             }
         }
@@ -137,13 +139,13 @@ $(function () {
     function setShipPos() {
         ship.center = setshipCenterArr();
         var direction = setDirection();
-        for (var i = 0; i < 3; i++) {
+        for (var i = 0; i < ship.length; i++) {
             if (direction[i] == 0) {
                 //direction[i]의 랜덤값이 0인 경우 가로로 배치합니다
                 ship.total.push(ship.center[i] - 1, ship.center[i], ship.center[i] + 1);
             } else if (direction[i] == 1) {
                 //direction[i]의 랜덤값이 1인 경우 세로로 배치합니다
-                ship.total.push(ship.center[i] - 7, ship.center[i], ship.center[i] + 7);
+                ship.total.push(ship.center[i] - map.size, ship.center[i], ship.center[i] + map.size);
             }
         }
         console.log("모든 배의 좌표 : ", ship.total);
