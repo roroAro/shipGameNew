@@ -17,7 +17,7 @@ $(function () {
     var mapSize = 7;
     var shipAmt = 3;
     //배가 위치할 수 없는 구석자리
-    var edgePos = [0, mapSize - 1, mapSize * (mapSize - 1), mapSize * mapSize - 1];
+    var edgePos = [0, mapSize, mapSize * (mapSize - 1) + 1, mapSize * mapSize];
     //배가 너무 가까운 경우의 좌표 차
     //각각의 숫자는 좌우 / 우상단,좌하단 / 상단,하단 / 좌상단,우하단 / 좌우로 2칸 / 상하로 2칸
     var closePos = [1, -1, 6, -6, 7, -7, 8, -8, 2, -2, 14, -14]
@@ -43,21 +43,29 @@ $(function () {
 
     function checkDistance(random) {
         var diff;
+        var flag;
         if (shipCenter.length == 0) {
             return true;
-        }
-        for (var i = 0; i < closePos.length; i++) {
-            diff = random - shipCenter[i];
-            if (closePos.indexOf(diff)>=0) {
-                console.log("checkDistance(): return false", shipCenter, random)
+        } else if (shipCenter.length >= 1) {
+            for (var i = 0; i < shipCenter.length; i++) {
+                diff = shipCenter[i] - random;
+                if (closePos.indexOf(diff) >= 0) {
+                    flag = false;
+                    console.log("checkDistance(): return false", shipCenter, random)
+                }
+            }
+
+            if (flag == false) {
                 return false;
             } else {
                 return true;
             }
+         
         }
     }
 
     function checkDuplicate(random) {
+
         if (shipCenter.indexOf(random) >= 0) {
             console.log("checkDuplicate(): return false", random)
             return false;
@@ -72,11 +80,11 @@ $(function () {
         var flagDis = checkDistance(randomNum);
         var flagDup = checkDuplicate(randomNum);
         if (flagEdge && flagDis && flagDup) {
-            console.log("랜덤넘버 성공 : ",randomNum, flagEdge, flagDis, flagDup)
+            console.log("랜덤넘버 성공 : ", randomNum, flagEdge, flagDis, flagDup)
             shipCenter.push(randomNum);
             return shipCenter;
-        }else{
-            console.log("랜덤넘버 실패 : ",randomNum, flagEdge, flagDis, flagDup)
+        } else {
+            console.log("랜덤넘버 실패 : ", randomNum, flagEdge, flagDis, flagDup)
         }
     }
 
@@ -84,6 +92,7 @@ $(function () {
         while (shipCenter.length < 3) {
             setShipCenter();
         }
+        console.log("setShipCenterArr", shipCenter)
         return shipCenter;
     }
 
@@ -151,6 +160,7 @@ $(function () {
         //전함을 맞춘 경우 이 배열 안에 맞춘 곳이 중앙인지 사이드인지 들어가 추후 점수계산에서 사용됩니다
         //클릭시마다 초기화 됩니다
         var gradeArr = [];
+
         clickCount++;
 
         if ($(this).html() == "") {
@@ -171,16 +181,16 @@ $(function () {
                 $("#result").val("전함을 정확히 맞혔습니다!!")
                 gradeArr.push("center")
                 leftShip--;
-            } else if (ships.indexOf(userPick) >= 0) {
 
+            } else if (ships.indexOf(userPick) >= 0) {
                 //전함의 사이드에 맞춘 경우 
                 $(this).html("");
                 $(this).css("background-color", "darkblue");
                 $("#result").val("무언가가 맞았다!!")
                 gradeArr.push("side")
                 leftShip--;
-            } else {
 
+            } else {
                 //아무것도 맞추지 못한 경우 
                 $(this).html("");
                 $("#result").val("꽝")
@@ -225,3 +235,4 @@ $(function () {
 
     })
 })
+
