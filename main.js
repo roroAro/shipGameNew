@@ -18,11 +18,11 @@ $(function () {
         size: 7,
     }
     var ship = {
-        amount :3,
+        amount :4,
         length: 3,
         center :[],
         total:[],
-
+        left: 4*3
     }
     /**
      var map.size = 7;
@@ -123,7 +123,7 @@ $(function () {
         for (var i = 0; i < ship.amount; i++) {
             direction[i] = Math.floor(Math.random() * 2);
         }
-        for (var i = 0; i < ship.length; i++) {
+        for (var i = 0; i < ship.amount; i++) {
             if (ship.center[i] >= 1 && ship.center[i] <= map.size) {
                 direction[i] = 0;
             } else if (ship.center[i] >=  edgePos[2] && ship.center[i] <= edgePos[3]) {
@@ -139,7 +139,7 @@ $(function () {
     function setShipPos() {
         ship.center = setshipCenterArr();
         var direction = setDirection();
-        for (var i = 0; i < ship.length; i++) {
+        for (var i = 0; i < ship.amount; i++) {
             if (direction[i] == 0) {
                 //direction[i]의 랜덤값이 0인 경우 가로로 배치합니다
                 ship.total.push(ship.center[i] - 1, ship.center[i], ship.center[i] + 1);
@@ -165,9 +165,6 @@ $(function () {
     ///////////////////////////////////////////
     var clickCount = 0;
     var grade = 0;
-
-    //전함을 맞춘 경우 1씩 감소합니다. 0이 되면 게임을 종료시키기 위한 변수 
-    var leftShip = 9;
 
     $("table tbody tr td").click(function () {
         var userPick = parseInt($(this).text());
@@ -196,7 +193,7 @@ $(function () {
                 $(this).css("background-color", "darkred");
                 $("#result").val("전함을 정확히 맞혔습니다!!")
                 gradeArr.push("center")
-                leftShip--;
+                ship.left--;
 
             } else if (ship.total.indexOf(userPick) >= 0) {
                 //전함의 사이드에 맞춘 경우 
@@ -204,7 +201,7 @@ $(function () {
                 $(this).css("background-color", "darkblue");
                 $("#result").val("무언가가 맞았다!!")
                 gradeArr.push("side")
-                leftShip--;
+                ship.left--;
 
             } else {
                 //아무것도 맞추지 못한 경우 
@@ -244,7 +241,7 @@ $(function () {
         }
 
         //사용자가 모든 전함의 위치를 알아내면 게임을 종료합니다.
-        if (leftShip == 0) {
+        if (ship.left == 0) {
             $("#result").val("모든 전함이 침몰했습니다. 점수를 확인하세요");
         }
         $("#grade").val(grade);
