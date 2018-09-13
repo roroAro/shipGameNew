@@ -18,14 +18,15 @@ $(function () {
         size: 7,
     }
     var ship = {
-        amount: 3,
+        amount: 4,
         length: 3,
         center: [],
         total: [],
-        left: 3 * 3
+        left: 4 * 3
     }
 
     //배가 위치할 수 없는 구석자리
+    var mapSize = map.size;
     var edgePos = [1, map.size, map.size * (map.size - 1) + 1, map.size * map.size];
 
     //배가 너무 가까운 경우의 좌표 차
@@ -62,6 +63,7 @@ $(function () {
             for (var i = 0; i < diff.length; i++) {
                 if (closePos.indexOf(diff[i]) >= 0) {
                     flag.push(false);
+                    console.log("flag : ",flag)
                     console.log("checkDistance(): return false", ship.center, random)
                 } else {
                     flag.push(true);
@@ -117,6 +119,8 @@ $(function () {
         for (var i = 0; i < ship.amount; i++) {
             direction[i] = Math.floor(Math.random() * 2);
         }
+
+        //ship.center가 테두리인덱스에 걸릴 경우 방향 보정 
         for (var i = 0; i < ship.amount; i++) {
             if (ship.center[i] >= 1 && ship.center[i] <= map.size) {
                 direction[i] = 0;
