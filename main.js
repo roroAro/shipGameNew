@@ -14,22 +14,35 @@ $(function () {
     ///////////////////////////////////////////
     ///////////////게임 세팅   /////////////////
     ///////////////////////////////////////////
-    var mapSize = 7;
-    var shipAmt = 3;
+    var map = {
+        size: 7,
+    }
+    var ship = {
+        amount :3,
+        center :[],
+        total:[],
+    }
+    /**
+     var map.size = 7;
+     var ship.amount = 3;
+     var ship.center = [];
+     var ship.total = [];
+     * 
+     */
     //배가 위치할 수 없는 구석자리
-    var edgePos = [0, mapSize, mapSize * (mapSize - 1) + 1, mapSize * mapSize];
+    var edgePos = [0, map.size, map.size * (map.size - 1) + 1, map.size * map.size];
     //배가 너무 가까운 경우의 좌표 차
     //각각의 숫자는 좌우 / 우상단,좌하단 / 상단,하단 / 좌상단,우하단 / 좌우로 2칸 / 상하로 2칸
-    var closePos = [1, -1, mapSize, -(mapSize-1), mapSize, -mapSize, mapSize+1, -(mapSize+1), 2, -2, mapSize*2, -mapSize*2]
+    var closePos = [1, -1, map.size, -(map.size - 1), map.size, -map.size, map.size + 1, -(map.size + 1), 2, -2, map.size * 2, -map.size * 2]
 
-    var shipCenter = [];
-    var ships = [];
 
     //맵의 크기에 맞는 랜덤 숫자 생성
     //배의 좌표값이 됩니다
     function makeRandomNum() {
-        var randomNum = Math.floor(Math.random() * Math.pow(mapSize,2.0)) + 1;
+        var randomNum = Math.floor(Math.random() * Math.pow(map.size, 2.0)) + 1;
         return randomNum;
+
+
     }
 
     //모서리를 피하기 위한 함수
@@ -46,14 +59,14 @@ $(function () {
     function checkDistance(random) {
         var diff;
         var flag;
-        if (shipCenter.length == 0) {
+        if (ship.center.length == 0) {
             return true;
-        } else if (shipCenter.length >= 1) {
-            for (var i = 0; i < shipCenter.length; i++) {
-                diff = shipCenter[i] - random;
+        } else if (ship.center.length >= 1) {
+            for (var i = 0; i < ship.center.length; i++) {
+                diff = ship.center[i] - random;
                 if (closePos.indexOf(diff) >= 0) {
                     flag = false;
-                    console.log("checkDistance(): return false", shipCenter, random)
+                    console.log("checkDistance(): return false", ship.center, random)
                 }
             }
             if (flag == false) {
@@ -61,14 +74,14 @@ $(function () {
             } else {
                 return true;
             }
-         
+
         }
     }
 
     //배의 좌표가 겹치는지 검사하는 함수
     function checkDuplicate(random) {
 
-        if (shipCenter.indexOf(random) >= 0) {
+        if (ship.center.indexOf(random) >= 0) {
             console.log("checkDuplicate(): return false", random)
             return false;
         } else {
@@ -76,27 +89,27 @@ $(function () {
         }
     }
 
-    //checkEdge, checkDistance, checkDuplicate가 모두 true일 때 shipCenter 배열에 랜덤 숫자 추가
-    function setShipCenter() {
+    //checkEdge, checkDistance, checkDuplicate가 모두 true일 때 ship.center 배열에 랜덤 숫자 추가
+    function setshipCenter() {
         var randomNum = makeRandomNum();
         var flagEdge = checkEdge(randomNum);
         var flagDis = checkDistance(randomNum);
         var flagDup = checkDuplicate(randomNum);
         if (flagEdge && flagDis && flagDup) {
             console.log("랜덤넘버 성공 : ", randomNum, flagEdge, flagDis, flagDup)
-            shipCenter.push(randomNum);
-            return shipCenter;
+            ship.center.push(randomNum);
+            return ship.center;
         } else {
             console.log("랜덤넘버 실패 : ", randomNum, flagEdge, flagDis, flagDup)
         }
     }
-    
-    function setShipCenterArr() {
-        while (shipCenter.length < shipAmt) {
-            setShipCenter();
+
+    function setshipCenterArr() {
+        while (ship.center.length < ship.amount) {
+            setshipCenter();
         }
-        console.log("setShipCenterArr", shipCenter)
-        return shipCenter;
+        console.log("setship.centerArr", ship.center)
+        return ship.center;
     }
 
     //세 척의 배에 방향을 정하겠습니다
@@ -109,11 +122,11 @@ $(function () {
             direction[i] = Math.floor(Math.random() * 2);
         }
         for (var i = 0; i < 3; i++) {
-            if (shipCenter[i] >= 1 && shipCenter[i] <= 7) {
+            if (ship.center[i] >= 1 && ship.center[i] <= 7) {
                 direction[i] = 0;
-            } else if (shipCenter[i] >= 43 && shipCenter[i] <= 49) {
+            } else if (ship.center[i] >= 43 && ship.center[i] <= 49) {
                 direction[i] = 0;
-            } else if (shipCenter[i] % 7 == 0 || shipCenter[i] % 7 == 1) {
+            } else if (ship.center[i] % 7 == 0 || ship.center[i] % 7 == 1) {
                 direction[i] = 1;
             }
         }
@@ -122,29 +135,28 @@ $(function () {
 
 
     function setShipPos() {
-        var shipCenter = setShipCenterArr();
+        ship.center = setshipCenterArr();
         var direction = setDirection();
         for (var i = 0; i < 3; i++) {
             if (direction[i] == 0) {
                 //direction[i]의 랜덤값이 0인 경우 가로로 배치합니다
-                ships.push(shipCenter[i] - 1, shipCenter[i], shipCenter[i] + 1);
+                ship.total.push(ship.center[i] - 1, ship.center[i], ship.center[i] + 1);
             } else if (direction[i] == 1) {
                 //direction[i]의 랜덤값이 1인 경우 세로로 배치합니다
-                ships.push(shipCenter[i] - 7, shipCenter[i], shipCenter[i] + 7);
+                ship.total.push(ship.center[i] - 7, ship.center[i], ship.center[i] + 7);
             }
         }
-        console.log("모든 배의 좌표 : ", ships);
-        return ships;
+        console.log("모든 배의 좌표 : ", ship.total);
+        return ship.total;
     }
 
     function main() {
-        var ships = setShipPos();
-        console.log("main", ships);
-        return ships;
+        ship.total = setShipPos();
+        console.log("main", ship.total);
+        return ship.total;
     }
 
-    var ships = main();
-
+    ship.total = main();
 
     ///////////////////////////////////////////
     //////////////// 게임 시작 /////////////////
@@ -175,7 +187,7 @@ $(function () {
             //클릭이 되었음을 알리기 위해 좌표의 html을 제거하고 배경 색을 바꿔줍니다 
             //전함을 맞춘 경우, 중앙인지 사이드인지 알리기 위해 gradeArr 배열에 값을 넣어줍니다 
             //전함을 맞춘 경우, leftShip의 값을 1씩 감소킵니다. 나중에 0이 되면 게임을 종료시킵니다. (초기값 : 9)
-            if (shipCenter.indexOf(userPick) >= 0) {
+            if (ship.center.indexOf(userPick) >= 0) {
 
                 //전함의 중앙에 맞춘 경우 
                 $(this).html("");
@@ -184,7 +196,7 @@ $(function () {
                 gradeArr.push("center")
                 leftShip--;
 
-            } else if (ships.indexOf(userPick) >= 0) {
+            } else if (ship.total.indexOf(userPick) >= 0) {
                 //전함의 사이드에 맞춘 경우 
                 $(this).html("");
                 $(this).css("background-color", "darkblue");
