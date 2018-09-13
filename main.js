@@ -22,15 +22,17 @@ $(function () {
     //각각의 숫자는 좌우 / 우상단,좌하단 / 상단,하단 / 좌상단,우하단 / 좌우로 2칸 / 상하로 2칸
     var closePos = [1, -1, mapSize, -(mapSize-1), mapSize, -mapSize, mapSize+1, -(mapSize+1), 2, -2, mapSize*2, -mapSize*2]
 
-    //세 척의 배 중앙 위치 랜덤 생성  
     var shipCenter = [];
     var ships = [];
 
+    //맵의 크기에 맞는 랜덤 숫자 생성
+    //배의 좌표값이 됩니다
     function makeRandomNum() {
         var randomNum = Math.floor(Math.random() * Math.pow(mapSize,2.0)) + 1;
         return randomNum;
     }
 
+    //모서리를 피하기 위한 함수
     function checkEdge(random) {
         if (edgePos.indexOf(random) >= 0) {
             console.log("checkEdge(): return false ", random)
@@ -38,9 +40,9 @@ $(function () {
         } else {
             return true;
         }
-
     }
 
+    //각각 배 사이의 거리가 적절한지 검사하는 함수
     function checkDistance(random) {
         var diff;
         var flag;
@@ -63,6 +65,7 @@ $(function () {
         }
     }
 
+    //배의 좌표가 겹치는지 검사하는 함수
     function checkDuplicate(random) {
 
         if (shipCenter.indexOf(random) >= 0) {
@@ -73,6 +76,7 @@ $(function () {
         }
     }
 
+    //checkEdge, checkDistance, checkDuplicate가 모두 true일 때 shipCenter 배열에 랜덤 숫자 추가
     function setShipCenter() {
         var randomNum = makeRandomNum();
         var flagEdge = checkEdge(randomNum);
@@ -86,7 +90,7 @@ $(function () {
             console.log("랜덤넘버 실패 : ", randomNum, flagEdge, flagDis, flagDup)
         }
     }
-
+    
     function setShipCenterArr() {
         while (shipCenter.length < shipAmt) {
             setShipCenter();
