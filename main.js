@@ -14,29 +14,33 @@ $(function () {
     ///////////////////////////////////////////
     ///////////////게임 세팅   /////////////////
     ///////////////////////////////////////////
-    var map = {
-        size: 7,
-    }
+    var mapSize= 7;
     var ship = {
-        amount: 3,
+        amount: 4,
         length: 3,
         center: [],
         total: [],
-        left: 3 * 3
     }
 
     //배가 위치할 수 없는 구석자리
-    var edgePos = [1, map.size, map.size * (map.size - 1) + 1, map.size * map.size];
+    var edgePos = [1, mapSize, mapSize * (mapSize - 1) + 1, mapSize * mapSize];
 
     //배가 너무 가까운 경우의 좌표 차
     //각각의 숫자는 좌우 / 우상단,좌하단 / 상단,하단 / 좌상단,우하단 / 좌우로 2칸 / 상하로 2칸
-    var closePos = [1, -1, map.size, -(map.size - 1), map.size, -map.size, map.size + 1, -(map.size + 1), 2, -2, map.size * 2, -map.size * 2]
+    var closePos = [1, -1, mapSize, -(mapSize - 1), mapSize, -mapSize, mapSize + 1, -(mapSize + 1), 2, -2, mapSize * 2, -mapSize * 2]
+
+    function main() {
+        ship.total = setShipPos();
+        console.log("main", ship.total);
+        return ship.total;
+    }
+    ship.total = main();
 
     //맵의 크기에 맞는 랜덤 숫자 생성
     //배의 좌표값이 됩니다
-    function makeRandomNum() {
-        var randomNum = Math.floor(Math.random() * Math.pow(map.size, 2.0)) + 1;
-        return randomNum;
+    function makeTempPos() {
+        var tempPos = Math.floor(Math.random() * Math.pow(mapSize, 2.0)) + 1;
+        return tempPos;
     }
 
     //모서리를 피하기 위한 함수
@@ -86,25 +90,25 @@ $(function () {
     }
 
     //checkEdge, checkDistance, checkDuplicate가 모두 true일 때 ship.center 배열에 랜덤 숫자 추가
-    function setshipCenter() {
-        var randomNum = makeRandomNum();
-        var flagEdge = checkEdge(randomNum);
-        var flagDis = checkDistance(randomNum);
-        var flagDup = checkDuplicate(randomNum);
+    function setShipCenter() {
+        var tempPos = makeTempPos();
+        var flagEdge = checkEdge(tempPos);
+        var flagDis = checkDistance(tempPos);
+        var flagDup = checkDuplicate(tempPos);
         if (flagEdge && flagDis && flagDup) {
-            console.log("랜덤넘버 성공 : ", randomNum, flagEdge, flagDis, flagDup)
-            ship.center.push(randomNum);
+            console.log("랜덤넘버 성공 : ", tempPos, flagEdge, flagDis, flagDup)
+            ship.center.push(tempPos);
             return ship.center;
         } else {
-            console.log("랜덤넘버 실패 : ", randomNum, flagEdge, flagDis, flagDup)
+            console.log("랜덤넘버 실패 : ", tempPos, flagEdge, flagDis, flagDup)
         }
     }
 
-    function setshipCenterArr() {
+    function setShipCenterArr() {
         while (ship.center.length < ship.amount) {
-            setshipCenter();
+            setShipCenter();
         }
-        console.log("setshipCenterArr", ship.center)
+        console.log("setShipCenterArr", ship.center)
         return ship.center;
     }
 
@@ -117,12 +121,14 @@ $(function () {
         for (var i = 0; i < ship.amount; i++) {
             direction[i] = Math.floor(Math.random() * 2);
         }
+
+        //ship.center가 테두리인덱스에 걸릴 경우 방향 보정 
         for (var i = 0; i < ship.amount; i++) {
-            if (ship.center[i] >= 1 && ship.center[i] <= map.size) {
+            if (ship.center[i] >= 1 && ship.center[i] <= mapSize) {
                 direction[i] = 0;
             } else if (ship.center[i] >= edgePos[2] && ship.center[i] <= edgePos[3]) {
                 direction[i] = 0;
-            } else if (ship.center[i] % map.size == 0 || ship.center[i] % map.size == 1) {
+            } else if (ship.center[i] % mapSize == 0 || ship.center[i] % mapSize == 1) {
                 direction[i] = 1;
             }
         }
@@ -131,7 +137,7 @@ $(function () {
 
 
     function setShipPos() {
-        ship.center = setshipCenterArr();
+        ship.center = setShipCenterArr();
         var direction = setDirection();
         for (var i = 0; i < ship.amount; i++) {
             if (direction[i] == 0) {
@@ -139,26 +145,21 @@ $(function () {
                 ship.total.push(ship.center[i] - 1, ship.center[i], ship.center[i] + 1);
             } else if (direction[i] == 1) {
                 //direction[i]의 랜덤값이 1인 경우 세로로 배치합니다
-                ship.total.push(ship.center[i] - map.size, ship.center[i], ship.center[i] + map.size);
+                ship.total.push(ship.center[i] - mapSize, ship.center[i], ship.center[i] + mapSize);
             }
         }
         console.log("모든 배의 좌표 : ", ship.total);
         return ship.total;
     }
 
-    function main() {
-        ship.total = setShipPos();
-        console.log("main", ship.total);
-        return ship.total;
-    }
 
-    ship.total = main();
 
     ///////////////////////////////////////////
     //////////////// 게임 시작 /////////////////
     ///////////////////////////////////////////
     var clickCount = 0;
     var grade = 0;
+    var remainShip = ship.amount * ship.length;
 
     $("table tbody tr td").click(function () {
         var userPick = parseInt($(this).text());
@@ -167,7 +168,6 @@ $(function () {
         //전함을 맞춘 경우 이 배열 안에 맞춘 곳이 중앙인지 사이드인지 들어가 추후 점수계산에서 사용됩니다
         //클릭시마다 초기화 됩니다
         var gradeArr = [];
-
         clickCount++;
 
         if ($(this).html() == "") {
@@ -187,7 +187,7 @@ $(function () {
                 $(this).css("background-color", "darkred");
                 $("#result").val("전함을 정확히 맞혔습니다!!")
                 gradeArr.push("center")
-                ship.left--;
+                remainShip--;
 
             } else if (ship.total.indexOf(userPick) >= 0) {
                 //전함의 사이드에 맞춘 경우 
@@ -195,7 +195,7 @@ $(function () {
                 $(this).css("background-color", "darkblue");
                 $("#result").val("무언가가 맞았다!!")
                 gradeArr.push("side")
-                ship.left--;
+                remainShip--;
 
             } else {
                 //아무것도 맞추지 못한 경우 
@@ -235,7 +235,7 @@ $(function () {
         }
 
         //사용자가 모든 전함의 위치를 알아내면 게임을 종료합니다.
-        if (ship.left == 0) {
+        if (remainShip == 0) {
             $("#result").val("모든 전함이 침몰했습니다. 점수를 확인하세요");
         }
         $("#grade").val(grade);
