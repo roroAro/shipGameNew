@@ -98,7 +98,6 @@ $(function () {
         if (flagEdge && flagDis && flagDup) {
             console.log("랜덤넘버 성공 : ", tempPos, flagEdge, flagDis, flagDup)
             ship.center.push(tempPos);
-            return ship.center;
         } else {
             console.log("랜덤넘버 실패 : ", tempPos, flagEdge, flagDis, flagDup)
         }
